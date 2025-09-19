@@ -1,61 +1,35 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <title>Inflation Data</title>
+  <meta charset="utf-8">
+  <title>Searchable Data</title>
   <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
-  <style>
-    body { font-family: Arial, sans-serif; margin: 20px; }
-    table { width: 100%; }
-    tfoot input { width: 100%; box-sizing: border-box; }
-  </style>
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 </head>
 <body>
-  <h1>Inflation Data</h1>
-  <table id="data-table" class="display">
-    <thead></thead>
-    <tfoot></tfoot>
-    <tbody></tbody>
-  </table>
+  <h2 style="text-align:center;">📊 Inflation Data Search</h2>
+  <table id="myTable" class="display" style="width:100%"></table>
 
-  <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
-  <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
   <script>
-    const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQWypNkAWtjzGTCzkaGisWnQvpH4w5oTzMiFLrAe_HwICSHzkh9hbRa06lC2eOzbamIxqHpJBJL_FBp/pub?output=csv'; // Replace with your Google Sheet CSV link
+    const csvUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQWypNkAWtjzGTCzkaGisWnQvpH4w5oTzMiFLrAe_HwICSHzkh9hbRa06lC2eOzbamIxqHpJBJL_FBp/pub?output=csv";
 
-    fetch(csvUrl)
-      .then(res => res.text())
-      .then(data => {
-        const rows = data.trim().split('\n').map(r => r.split(','));
-        const thead = $('#data-table thead');
-        const tfoot = $('#data-table tfoot');
-        const tbody = $('#data-table tbody');
+    async function loadCSV() {
+      const response = await fetch(csvUrl);
+      const data = await response.text();
+      const rows = data.split("\n").map(r => r.split(","));
 
-        // Header
-        thead.append('<tr>' + rows[0].map(h => `<th>${h}</th>`).join('') + '</tr>');
+      const headers = rows[0];
+      const tableData = rows.slice(1);
 
-        // Footer (for column filters)
-        tfoot.append('<tr>' + rows[0].map(h => `<th><input type="text" placeholder="Search ${h}" /></th>`).join('') + '</tr>');
-
-        // Body
-        rows.slice(1).forEach(row => {
-          tbody.append('<tr>' + row.map(cell => `<td>${cell}</td>`).join('') + '</tr>');
-        });
-
-        // Initialize DataTable with column search
-        const table = $('#data-table').DataTable();
-
-        // Apply column search
-        table.columns().every(function () {
-          const that = this;
-          $('input', this.footer()).on('keyup change clear', function () {
-            if (that.search() !== this.value) {
-              that.search(this.value).draw();
-            }
-          });
-        });
+      $('#myTable').DataTable({
+        data: tableData,
+        columns: headers.map(h => ({ title: h })),
+        pageLength: 25
       });
+    }
+
+    loadCSV();
   </script>
 </body>
 </html>
-
