@@ -44,7 +44,7 @@
       $('#myTable').DataTable({
         data: tableData,
         columns: headers.map(h => ({ title: h })),
-        pageLength: 25,
+        pageLength: 100,
         fixedHeader: true,      // ✅ Header always visible
         searchPanes: {          // ✅ Excel-like filters
           cascadePanes: true,
@@ -58,3 +58,4 @@
   </script>
 </body>
 </html>
+
