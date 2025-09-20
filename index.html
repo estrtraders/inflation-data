@@ -16,6 +16,8 @@
 </head>
 <body>
   <h2 style="text-align:center;">📊 Inflation Data Search</h2>
+  <h3 id="sheetTitle" style="text-align:center;"></h3>
+
   <table id="myTable" class="display" style="width:100%"></table>
 
   <script>
@@ -43,8 +45,8 @@
         dom: 'Plfrtip'   // ✅ Filter panel + length + search + pagination
       });
 
-      // Page title ko Row1 se update kar do
-      document.querySelector("h2").innerText = "📊 " + titleRow[0];
+      // Row 1 ka title 2nd heading me show karo
+      document.getElementById("sheetTitle").innerText = titleRow[0];
     }
 
     loadCSV();
