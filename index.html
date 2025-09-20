@@ -5,9 +5,14 @@
   <title>Searchable Data</title>
   <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
   <link rel="stylesheet" href="https://cdn.datatables.net/fixedheader/3.4.0/css/fixedHeader.dataTables.min.css">
+  <link rel="stylesheet" href="https://cdn.datatables.net/searchpanes/2.2.0/css/searchPanes.dataTables.min.css">
+  <link rel="stylesheet" href="https://cdn.datatables.net/select/1.7.0/css/select.dataTables.min.css">
+
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
   <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
   <script src="https://cdn.datatables.net/fixedheader/3.4.0/js/dataTables.fixedHeader.min.js"></script>
+  <script src="https://cdn.datatables.net/searchpanes/2.2.0/js/dataTables.searchPanes.min.js"></script>
+  <script src="https://cdn.datatables.net/select/1.7.0/js/dataTables.select.min.js"></script>
 </head>
 <body>
   <h2 style="text-align:center;">📊 Inflation Data Search</h2>
@@ -30,7 +35,12 @@
         data: tableData,
         columns: headers.map(h => ({ title: h })),
         pageLength: 100,
-        fixedHeader: true
+        fixedHeader: true,
+        searchPanes: {
+          cascadePanes: true,
+          initCollapsed: true
+        },
+        dom: 'Plfrtip'   // ✅ Filter panel + length + search + pagination
       });
 
       // Page title ko Row1 se update kar do
