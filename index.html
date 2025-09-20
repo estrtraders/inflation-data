@@ -1,55 +1,132 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <title>Searchable Data</title>
-  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
-  <link rel="stylesheet" href="https://cdn.datatables.net/fixedheader/3.4.0/css/fixedHeader.dataTables.min.css">
-  <link rel="stylesheet" href="https://cdn.datatables.net/searchpanes/2.2.0/css/searchPanes.dataTables.min.css">
-  <link rel="stylesheet" href="https://cdn.datatables.net/select/1.7.0/css/select.dataTables.min.css">
+    <meta charset="utf-8">
+    <title>Searchable Data</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Use Tailwind's default font -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap">
 
-  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-  <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-  <script src="https://cdn.datatables.net/fixedheader/3.4.0/js/dataTables.fixedHeader.min.js"></script>
-  <script src="https://cdn.datatables.net/searchpanes/2.2.0/js/dataTables.searchPanes.min.js"></script>
-  <script src="https://cdn.datatables.net/select/1.7.0/js/dataTables.select.min.js"></script>
+    <!-- Datatables CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/fixedheader/3.4.0/css/fixedHeader.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/searchpanes/2.2.0/css/searchPanes.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/select/1.7.0/css/select.dataTables.min.css">
+
+    <!-- Datatables JS -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/fixedheader/3.4.0/js/dataTables.fixedHeader.min.js"></script>
+    <script src="https://cdn.datatables.net/searchpanes/2.2.0/js/dataTables.searchPanes.min.js"></script>
+    <script src="https://cdn.datatables.net/select/1.7.0/js/dataTables.select.min.js"></script>
+
+    <style>
+        /* Custom styles to integrate with Tailwind and improve table appearance */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        #myTable_wrapper .dataTables_length,
+        #myTable_wrapper .dataTables_filter,
+        #myTable_wrapper .dataTables_info,
+        #myTable_wrapper .dataTables_paginate,
+        .dtsp-panesContainer,
+        .dataTables_scrollHeadInner {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.875rem; /* text-sm */
+        }
+
+        /* Alternating row colors for better readability */
+        #myTable.dataTable tr.odd {
+            background-color: #ebebeb; /* bg-gray-50 */
+        }
+        #myTable.dataTable tr.even {
+            background-color: #ffffff; /* bg-white */
+        }
+        
+        .dt-buttons button,
+        .dt-button {
+            background-color: #4f46e5;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transition: background-color 0.2s;
+        }
+        .dt-buttons button:hover,
+        .dt-button:hover {
+            background-color: #4338ca;
+        }
+
+        .dataTables_wrapper .dataTables_paginate .paginate_button.current,
+        .dataTables_wrapper .dataTables_paginate .paginate_button.current:hover {
+            background: #4f46e5;
+            color: white !important;
+            border: 1px solid #4f46e5;
+        }
+
+        .dataTables_wrapper .dataTables_paginate .paginate_button,
+        .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+            border-radius: 0.5rem;
+            border: 1px solid #d1d5db;
+        }
+    </style>
 </head>
-<body>
-  <h2 style="text-align:center;">📊 Inflation Data Search</h2>
-  <h3 id="sheetTitle" style="text-align:center;"></h3>
+<body class="bg-gray-50 text-gray-800 antialiased">
+    <div class="container mx-auto p-4 sm:p-6 lg:p-8">
+        <header class="text-center mb-8">
+            <h2 class="text-4xl font-extrabold text-indigo-700">📊 Inflation Data Search</h2>
+            <h3 id="sheetTitle" class="mt-2 text-2xl font-semibold text-gray-600"></h3>
+        </header>
 
-  <table id="myTable" class="display" style="width:100%"></table>
+        <div class="bg-white shadow-xl rounded-xl p-4 sm:p-6 lg:p-8">
+            <table id="myTable" class="min-w-full divide-y divide-gray-200"></table>
+        </div>
+    </div>
 
-  <script>
-    const csvUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQWypNkAWtjzGTCzkaGisWnQvpH4w5oTzMiFLrAe_HwICSHzkh9hbRa06lC2eOzbamIxqHpJBJL_FBp/pub?output=csv";
+    <script>
+        const csvUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQWypNkAWtjzGTCzkaGisWnQvpH4w5oTzMiFLrAe_HwICSHzkh9hbRa06lC2eOzbamIxqHpJBJL_FBp/pub?output=csv";
 
-    async function loadCSV() {
-      const response = await fetch(csvUrl);
-      const data = await response.text();
-      const rows = data.split("\n").map(r => r.split(","));
+        async function loadCSV() {
+            try {
+                const response = await fetch(csvUrl);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const data = await response.text();
+                const rows = data.split("\n").map(r => r.split(","));
 
-      // Row 1 = Title, Row 2 = Headers
-      const titleRow = rows[0];
-      const headers = rows[1];
-      const tableData = rows.slice(2);
+                const titleRow = rows[0];
+                const headers = rows[1];
+                const tableData = rows.slice(2);
 
-      $('#myTable').DataTable({
-        data: tableData,
-        columns: headers.map(h => ({ title: h })),
-        pageLength: 100,
-        fixedHeader: true,
-        searchPanes: {
-          cascadePanes: true,
-          initCollapsed: true
-        },
-        dom: 'Plfrtip'   // ✅ Filter panel + length + search + pagination
-      });
+                $('#myTable').DataTable({
+                    data: tableData,
+                    columns: headers.map(h => ({ title: h })),
+                    pageLength: 100,
+                    fixedHeader: true,
+                    searchPanes: {
+                        cascadePanes: true,
+                        initCollapsed: true,
+                    },
+                    dom: 'Plfrtip',
+                    language: {
+                        searchPanes: {
+                            clearMessage: 'Reset Filters'
+                        }
+                    }
+                });
 
-      // Row 1 ka title 2nd heading me show karo
-      document.getElementById("sheetTitle").innerText = titleRow[0];
-    }
+                document.getElementById("sheetTitle").innerText = titleRow[0];
+            } catch (error) {
+                console.error("Failed to load CSV data:", error);
+                document.getElementById("sheetTitle").innerText = "Error loading data. Please check the source URL.";
+            }
+        }
 
-    loadCSV();
-  </script>
+        $(document).ready(function() {
+            loadCSV();
+        });
+    </script>
 </body>
 </html>
