@@ -38,7 +38,7 @@
 
         /* Alternating row colors for better readability */
         #myTable.dataTable tr.odd {
-            background-color: #ebebeb; /* bg-gray-50 */
+            background-color: #ebebeb;
         }
         #myTable.dataTable tr.even {
             background-color: #ffffff; /* bg-white */
@@ -73,13 +73,13 @@
     </style>
 </head>
 <body class="bg-gray-50 text-gray-800 antialiased">
-    <div class="container mx-auto p-4 sm:p-6 lg:p-8">
+    <div class="p-4 sm:p-6 lg:p-8 w-full">
         <header class="text-center mb-8">
             <h2 class="text-4xl font-extrabold text-indigo-700">📊 Inflation Data Search</h2>
             <h3 id="sheetTitle" class="mt-2 text-2xl font-semibold text-gray-600"></h3>
         </header>
 
-        <div class="bg-white shadow-xl rounded-xl p-4 sm:p-6 lg:p-8">
+        <div class="bg-white shadow-xl rounded-xl p-4 sm:p-6 lg:p-8 w-full">
             <table id="myTable" class="min-w-full divide-y divide-gray-200"></table>
         </div>
     </div>
@@ -105,9 +105,12 @@
                     columns: headers.map(h => ({ title: h })),
                     pageLength: 100,
                     fixedHeader: true,
+                    autoWidth: false,
+                    scrollX: true,
                     searchPanes: {
                         cascadePanes: true,
                         initCollapsed: true,
+                        // Removed the columns property to show all available filters
                     },
                     dom: 'Plfrtip',
                     language: {
